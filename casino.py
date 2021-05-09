@@ -21,47 +21,42 @@ def card_provider(l):
 
 conn_list = []
 addr_list = []
+win_counts = {'A':0, 'B':0, 'C':0}
+players = ['A', 'B', 'C']
 
 def game_manager(connections, addresses):
-    winner_list = []
-    counter = 1
-    max_idx = []
+    round_counter = 1
     while True:
         dist_deck = card_provider(CARDS_PER_PLAYER*TOT_PLAYERS)
         dist_deck = [dist_deck[x*CARDS_PER_PLAYER:(x+1)*CARDS_PER_PLAYER] for x in range(TOT_PLAYERS)]
         with concurrent.futures.ThreadPoolExecutor() as executor:
             p_moves = executor.map(client_manager, conn_list, dist_deck)
-            max_val = 1
+            max_val = 0
             idx = 0
             for val in p_moves:
-                print (val)
                 if val > max_val:
-                    max_idx = [chr(idx+ord('A'))]
+                    max_idx = [idx]
                     max_val = val
                 elif val == max_val:
-                    max_idx.append(chr(idx+ord('A')))
+                    max_idx.append(idx)
                 idx += 1
         if len(max_idx)==1:
-            print("Player", max_idx[0], "wins round", counter)
+            print("Player", players[max_idx[0]], "wins round", round_counter)
+            win_counts[players[max_idx[0]]] += 1
         else:
             print("Tie betweeen players", end = ' ')
             for plyr in max_idx:
-                print(plyr, end = ' ')
+                print(players[plyr], end = ' ')
+                win_counts[players[plyr]] += 1
             print("In round 1")
-        counter+=1
-        winner_list.append(max_idx)
-        if counter % ROUNDS == 0:
-            win_lst = [0,0,0,0]
-            winnrs = []
+        if round_counter % ROUNDS == 0:
             max_val=0
-            for rd_wnnrs in winner_list:
-                for wnnrs in rd_wnnrs:
-                    win_lst[int(ord(wnnrs)-ord('A'))] += 1
-            for idx in range(TOT_PLAYERS):
-                if win_lst[idx] > max_val:
-                    winnrs = [chr(idx+ord('A'))]
-                elif win_lst[idx] == max_val:
-                    winnrs.append(chr(idx+ord('A')))
+            for player in win_counts:
+                if win_counts[player] > max_val:
+                    winnrs = [player]
+                    max_val = win_counts[player]
+                elif win_counts[player] == max_val:
+                    winnrs.append(player)
 
 
             if len(winnrs)==1:
@@ -76,6 +71,7 @@ def game_manager(connections, addresses):
             c = input("Cycle completed!\nDo you want to continue?(y/n): ")
             if c.strip().lower() != 'y':
                 break
+        round_counter+=1
 
 def client_manager(connection, dist_deck):
     connection.sendall(str(dist_deck).encode('utf-8'))
