@@ -51,7 +51,7 @@ def game_manager(connections, addresses):
             for plyr in max_idx:
                 print(players[plyr], end = ' ')
                 win_counts[players[plyr]] += 1
-            print("In round", )
+            print("In round", round_counter)
         if round_counter % ROUNDS == 0:
             max_val=0
             for player in win_counts:
