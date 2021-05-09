@@ -17,7 +17,11 @@ def card_provider(l):
         new_card = random.randrange(1, DECK_SIZE+1)
         if new_card not in cards:
             cards.append(new_card)
-    return cards
+    lst_to_return = []
+    for x in range(TOT_PLAYERS):
+        l = cards[x*CARDS_PER_PLAYER: (x+1)*CARDS_PER_PLAYER]
+        lst_to_return.append(str(l)[1:-1])
+    return lst_to_return
 
 conn_list = []
 addr_list = []
@@ -28,7 +32,6 @@ def game_manager(connections, addresses):
     round_counter = 1
     while True:
         dist_deck = card_provider(CARDS_PER_PLAYER*TOT_PLAYERS)
-        dist_deck = [dist_deck[x*CARDS_PER_PLAYER:(x+1)*CARDS_PER_PLAYER] for x in range(TOT_PLAYERS)]
         with concurrent.futures.ThreadPoolExecutor() as executor:
             p_moves = executor.map(client_manager, conn_list, dist_deck)
             max_val = 0
@@ -48,7 +51,7 @@ def game_manager(connections, addresses):
             for plyr in max_idx:
                 print(players[plyr], end = ' ')
                 win_counts[players[plyr]] += 1
-            print("In round 1")
+            print("In round", )
         if round_counter % ROUNDS == 0:
             max_val=0
             for player in win_counts:
@@ -71,6 +74,10 @@ def game_manager(connections, addresses):
             c = input("Cycle completed!\nDo you want to continue?(y/n): ")
             if c.strip().lower() != 'y':
                 break
+            round_counter = 0
+            for x in win_counts:
+                win_counts[x] = 0
+            continue
         round_counter+=1
 
 def client_manager(connection, dist_deck):

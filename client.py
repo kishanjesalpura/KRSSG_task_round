@@ -8,13 +8,21 @@ ROUNDS = 4
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     while True:
-        cards = s.recv(2048)
-        cards = cards.decode('utf-8')
-        if len(cards)==0:
+        data = s.recv(2048)
+        data = data.decode('utf-8')
+        if len(data)==0:
             break
-        try:
-            cards = eval(cards)
-            print("cards recieved are: ", cards)
+
+        if ',' in data:
+            cards = list(data.split(', '))
+            cards = [int(x) for x in cards]
+            temp = []
+            for x in cards:
+                if x%13 == 0:
+                    temp.append(13)
+                else:
+                    temp.append(x%13)
+            print("cards recieved are: ", temp)
             max_card = 0
             for card in cards:
                 if card%13==0:
@@ -23,5 +31,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 elif card%13 > max_card:
                     max_card = card%13
             s.sendall(str(max_card).encode('utf-8'))
-        except:
-            print(cards)
+        else:
+            print(data)
