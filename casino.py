@@ -74,7 +74,7 @@ def game_manager(connections, addresses):
             c = input("Cycle completed!\nDo you want to continue?(y/n): ")
             if c.strip().lower() != 'y':
                 break
-            round_counter = 0
+            round_counter = 1
             for x in win_counts:
                 win_counts[x] = 0
             continue
