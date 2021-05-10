@@ -10,9 +10,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     counter = 0
     while True:
         data = s.recv(2048)
-        data = data.decode('utf-8')
-        if len(data)==0:
+        if not data:
             break
+        data = data.decode('utf-8')
         if counter==ROUNDS:
             print(data)
             counter=0
