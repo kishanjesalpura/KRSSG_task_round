@@ -1,3 +1,10 @@
+# This programme has states in the form of functions.
+# Each state returns the transition if any(if not then returns None).
+# the return values of fuctions are list if any input is to be given to next state.
+# the 2nd element of the list is inputs to be given to it.
+
+
+# Declaring some global variables.
 counter = 0
 curr_values = {'A1':0, 'A2':0, 'B1':0, 'B2':0, 'C1':0, 'C2':0, 'D1':0, 'D2':0}
 possible_pairs = {
@@ -13,6 +20,7 @@ possible_pairs = {
 t = None
 
 
+# Takes the input of the user and adds it to the cars dictionary.
 def cars_arriving():
     cars = input("Cars arrived : ")
     counter = 0
@@ -22,6 +30,8 @@ def cars_arriving():
     return find_max_traffic
 
 
+# checks the counter to determine if to take the input.
+# Also controls when to exit the loop.
 def check_counter():
     global counter
     counter += 1
@@ -34,6 +44,7 @@ def check_counter():
         return None
 
 
+# finds the road on which the maximum number of cars.
 def find_max_traffic():
     m_t_val = 0
     for road in curr_values:
@@ -42,6 +53,9 @@ def find_max_traffic():
             m_t_road = road
     return [find_optimum_signals, m_t_road]
 
+
+# Finds the maximum road that can be opened
+# along with opening the current road.
 def find_optimum_signals(m_t_road):
     max_traffic = -1
     for road2 in possible_pairs[m_t_road]:
@@ -50,6 +64,9 @@ def find_optimum_signals(m_t_road):
             m_t_road2 = road2
     return [execute, [m_t_road, m_t_road2]]
 
+
+# OPens the signals for the current cycle.
+# Prints the corresponding message.
 def execute(operation):
     msgs = {'1':"go straight", '2':"go right"}
     operation = [x for x in operation if curr_values[x] != 0]
@@ -73,6 +90,8 @@ def execute(operation):
 if __name__ == "__main__":
     t = int(input("Enter t : "))
     next = check_counter()
+
+    # loop goes through all the directed states and calls the next function.
     while True:
         if next == None:
             break
