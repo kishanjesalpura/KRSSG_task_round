@@ -1,7 +1,11 @@
 # Card_game
 
-## (All the files are in the mater branc created by me)
+---
+
+## (All the files are in the mater branch created by me)
 ### (master branch is below the main branch when clicking on the main drop down menu)
+
+---
 
 ### How to run the programme?
 
